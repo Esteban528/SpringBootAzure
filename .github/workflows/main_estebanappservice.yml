@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - estebanappservice
+name: Build and deploy WAR app to Azure Web App - estebanappservice
 
 on:
   push:
@@ -28,14 +25,14 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: demo-1722972670462
-          path: '${{ github.workspace }}/target/*.jar'
+          name: demo-artifact
+          path: '${{ github.workspace }}/target/*.war'
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'testing'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
@@ -44,20 +41,19 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: demo-1722972670462
+          name: demo-artifact
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_301FB07BEC834316A6B106455A4ACC01 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E6E09F6C87F742289F93856E5F941C7C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_60F3CD028D91408D9E155032484BE401 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E4DBAE0DFC914878A16BF8C0E809CCA6 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2C05760E49EC4B0A9D671EFA49FA0E29 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F5621F1904C548C7AE569EE46E1AA4F0 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'estebanappservice'
-          slot-name: 'Production'
-          package: '*.war'
-          
+          slot-name: 'testing'
+          package: '${{ github.workspace }}/target/*.war'
